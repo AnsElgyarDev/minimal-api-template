@@ -76,11 +76,11 @@ dotnet new my-minimal-api -n ShopApp --dry-run
 
 ## Template parameters
 
-| Parameter             | Type | Default        | Description                                               |
-| --------------------- | ---- | -------------- | --------------------------------------------------------- |
-| `-n`, `--name`        | text | folder name    | Project name. Replaces `MyCompany.MinimalApi` everywhere. |
-| `-o`, `--output`      | path | current folder | Output directory.                                         |
-| `--ApiKeyPlaceholder` | text | `CHANGE_ME`    | Initial value of `ApiKey` in `appsettings.json`.          |
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `-n`, `--name` | text | folder name | Project name. Replaces `MyCompany.MinimalApi` everywhere. |
+| `-o`, `--output` | path | current folder | Output directory. |
+| `--ApiKeyPlaceholder` | text | `CHANGE_ME` | Initial value of `ApiKey` in `appsettings.json`. |
 
 List all available options:
 
@@ -117,43 +117,73 @@ $env:ApiKey = "my-real-key"
 
 If `ApiKey` is missing or still `CHANGE_ME`, the app logs a warning at startup.
 
+## How it works
+
+The repository holds a real, working project plus a small config file. The template engine turns it into a new project with your chosen name.
+
+```
+  templates/minimal-api/         working project + template.json
+              │
+              │   dotnet pack
+              ▼
+  MyTemplates.0.1.0-beta.nupkg   NuGet package
+              │
+              │   dotnet new install
+              ▼
+  my-minimal-api                 template registered on your machine
+              │
+              │   dotnet new my-minimal-api -n ShopApp
+              ▼
+  ShopApp/                       your new project
+```
+
 ## Generated project structure
 
 Running `dotnet new my-minimal-api -n ShopApp` produces:
 
 ```
 ShopApp/
-    ShopApp.slnx
-    src/
-        ShopApp/
-            ShopApp.csproj
-            Program.cs
-            appsettings.json
-            appsettings.Development.json
-            Properties/
-                launchSettings.json
+├── ShopApp.slnx
+└── src/
+    └── ShopApp/
+        ├── ShopApp.csproj
+        ├── Program.cs
+        ├── appsettings.json
+        ├── appsettings.Development.json
+        └── Properties/
+            └── launchSettings.json
 ```
+
+### What gets renamed
+
+| In the template | In the generated project |
+|---|---|
+| `MyCompany.MinimalApi.slnx` | `ShopApp.slnx` |
+| `src/MyCompany.MinimalApi/` | `src/ShopApp/` |
+| `MyCompany.MinimalApi.csproj` | `ShopApp.csproj` |
+| `Hello from MyCompany.MinimalApi` in `Program.cs` | `Hello from ShopApp` |
+| Launch profile name in `launchSettings.json` | `ShopApp` |
 
 ## Repository structure
 
 ```
 minimal-api-template/
-    MyTemplates.csproj              Packaging project (PackageType=Template)
-    README.md
-    .gitignore
-    templates/
-        minimal-api/                Template root
-            .template.config/
-                template.json       Template definition (sourceName, symbols, shortName)
-            MyCompany.MinimalApi.slnx
-            src/
-                MyCompany.MinimalApi/
-                    MyCompany.MinimalApi.csproj
-                    Program.cs
-                    appsettings.json
-                    appsettings.Development.json
-                    Properties/
-                        launchSettings.json
+├── MyTemplates.csproj                   # Packaging project (PackageType=Template)
+├── README.md
+├── .gitignore
+└── templates/
+    └── minimal-api/                     # Template root
+        ├── .template.config/
+        │   └── template.json            # sourceName, symbols, shortName
+        ├── MyCompany.MinimalApi.slnx
+        └── src/
+            └── MyCompany.MinimalApi/    # Folder name is replaced by -n
+                ├── MyCompany.MinimalApi.csproj
+                ├── Program.cs
+                ├── appsettings.json     # Placeholders: CHANGE_ME
+                ├── appsettings.Development.json
+                └── Properties/
+                    └── launchSettings.json
 ```
 
 How the pieces fit together:
@@ -228,13 +258,13 @@ dotnet new uninstall MyTemplates
 
 ## Troubleshooting
 
-| Problem                                           | Solution                                                                                                              |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Template not found after install                  | Run `dotnet new list my-minimal-api`. If empty, check that `.template.config/template.json` exists and is valid JSON. |
-| Old project name still appears in generated files | Search the output for `MyCompany.MinimalApi` and make sure every file uses exactly that text.                         |
-| `bin` or `obj` folders inside the package         | Check the `Exclude` patterns in `MyTemplates.csproj` and `template.json`.                                             |
-| Changes to the template are not applied           | Uninstall and reinstall the template, then run `dotnet new --debug:reinit`.                                           |
-| Warning NU5128 during pack                        | Already suppressed through `NoWarn` in `MyTemplates.csproj`.                                                          |
+| Problem | Solution |
+|---|---|
+| Template not found after install | Run `dotnet new list my-minimal-api`. If empty, check that `.template.config/template.json` exists and is valid JSON. |
+| Old project name still appears in generated files | Search the output for `MyCompany.MinimalApi` and make sure every file uses exactly that text. |
+| `bin` or `obj` folders inside the package | Check the `Exclude` patterns in `MyTemplates.csproj` and `template.json`. |
+| Changes to the template are not applied | Uninstall and reinstall the template, then run `dotnet new --debug:reinit`. |
+| Warning NU5128 during pack | Already suppressed through `NoWarn` in `MyTemplates.csproj`. |
 
 ## Contributing
 
