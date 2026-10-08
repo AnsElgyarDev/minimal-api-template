@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MyCompany.MinimalApi.Data;
 using MyCompany.MinimalApi.Middlewares;
@@ -7,7 +8,8 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddOpenApi();
 builder.Services.AddAuthorization();
 builder.Services.AddProblemDetails();
@@ -53,9 +55,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 var app = builder.Build();
 
 // Error handling, HTTPS and logging first
+app.UseMiddleware<RequestLogMiddleware>();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
-app.UseMiddleware<RequestLogMiddleware>();
 
 app.UseSession();
 app.UseAuthentication();
