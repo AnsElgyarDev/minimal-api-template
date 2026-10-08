@@ -1,9 +1,14 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MyCompany.MinimalApi.Data;
+using MyCompany.MinimalApi.Endpoints;
+using MyCompany.MinimalApi.Helpers;
 using MyCompany.MinimalApi.Middlewares;
+using MyCompany.MinimalApi.Models;
+using MyCompany.MinimalApi.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,13 +16,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddOpenApi();
-builder.Services.AddAuthorization();
+builder.Services.AddAppPolicies(); // registers authorization + policies
 builder.Services.AddProblemDetails();
 builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-// TODO (next phase): Encryption settings + service, AddAppPolicies
+builder.Services.AddOptions<EncryptionSettings>()
+    .Bind(builder.Configuration.GetSection(EncryptionSettings.SectionName))
+    .Validate(s => s.IsKeyValid(),
+        "EncryptionSettings:Key must be Base64 of exactly 32 bytes. Set it using user-secrets or an environment variable.")
+    .ValidateOnStart();
+builder.Services.AddSingleton<IEncryptionService, EncryptionService>();
+
+builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddSession(options =>
 {
@@ -54,7 +67,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
-// Error handling, HTTPS and logging first
+// Logging first (so it sees the final status), then error handling and HTTPS
 app.UseMiddleware<RequestLogMiddleware>();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
@@ -70,7 +83,8 @@ if (app.Environment.IsDevelopment())
     app.MapGet("/", () => Results.Redirect("/scalar/v1")).ExcludeFromDescription();
 }
 
-// TODO (next phase): Auth and User endpoints
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+app.MapAuthEndpoints();
+app.MapUserEndpoints();
 
 app.Run();
