@@ -1,0 +1,15 @@
+# Ignore build outputs & cache
+**/bin/
+**/obj/
+**/out/
+
+# Ignore IDE and OS configurations
+.vs/
+.vscode/
+.idea/
+.git/
+.gitignore
+
+# Ignore Docker files themselves
+Dockerfile*
+.dockerignore
