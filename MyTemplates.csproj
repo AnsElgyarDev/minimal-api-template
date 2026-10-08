@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <PackageId>MyTemplates</PackageId>
+    <Version>0.1.0-beta</Version>
+    <Authors>Ans Elgyar</Authors>
+    <Description>A dotnet new template for a clean, ready-to-run ASP.NET Core Minimal API project.</Description>
+    <PackageTags>dotnet-new;templates;minimal-api;webapi</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/AnsElgyarDev/minimal-api-template</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AnsElgyarDev/minimal-api-template</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <TargetFramework>net10.0</TargetFramework>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="templates\**\*"
+             Exclude="templates\**\bin\**;templates\**\obj\**;templates\**\.vs\**" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
