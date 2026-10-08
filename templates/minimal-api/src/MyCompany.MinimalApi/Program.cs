@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using MyCompany.MinimalApi.Data;
 using MyCompany.MinimalApi.Data.Configurations;
 using MyCompany.MinimalApi.Endpoints;
-using MyCompany.MinimalApi.Helper;
+using MyCompany.MinimalApi.Helpers;
 using MyCompany.MinimalApi.Middlewares;
 using MyCompany.MinimalApi.Services;
 using Scalar.AspNetCore;
@@ -75,7 +75,7 @@ if (app.Environment.IsDevelopment())
     app.MapGet("/", () => Results.Redirect("/scalar/v1")).ExcludeFromDescription();
 }
 
-await app.UseAuthEndpoints();
-await app.MapUserEndpoints();
+// await app.UseAuthEndpoints();
+// await app.MapUserEndpoints();
 
 app.Run();
