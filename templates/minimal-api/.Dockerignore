@@ -1,15 +1,19 @@
-# Ignore build outputs & cache
+# Build output
 **/bin/
 **/obj/
 **/out/
 
-# Ignore IDE and OS configurations
+# IDE and OS files
 .vs/
 .vscode/
 .idea/
+*.user
+
+# Git
 .git/
 .gitignore
 
-# Ignore Docker files themselves
+# Not needed to build the image
 Dockerfile*
 .dockerignore
+tests/
