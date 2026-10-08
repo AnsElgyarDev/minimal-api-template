@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using MyCompany.MinimalApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 

@@ -2,11 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MyCompany.MinimalApi.Data;
-using MyCompany.MinimalApi.Data.Configurations;
-using MyCompany.MinimalApi.Endpoints;
-using MyCompany.MinimalApi.Helpers;
 using MyCompany.MinimalApi.Middlewares;
-using MyCompany.MinimalApi.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,11 +14,8 @@ builder.Services.AddProblemDetails();
 builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.Configure<EncryptionSettings>(
-    builder.Configuration.GetSection("EncryptionSettings"));
 
-builder.Services.AddSingleton<IEncryptionService, EncryptionService>();
-builder.Services.AddAppPolicies();
+// TODO (next phase): Encryption settings + service, AddAppPolicies
 
 builder.Services.AddSession(options =>
 {
@@ -52,7 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidAudience = builder.Configuration["Jwt:Audience"],
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ClockSkew = TimeSpan.Zero,
+        ClockSkew = TimeSpan.Zero, // removes the default 5 minutes tolerance
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
@@ -75,7 +68,7 @@ if (app.Environment.IsDevelopment())
     app.MapGet("/", () => Results.Redirect("/scalar/v1")).ExcludeFromDescription();
 }
 
-// await app.UseAuthEndpoints();
-// await app.MapUserEndpoints();
+// TODO (next phase): Auth and User endpoints
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.Run();
