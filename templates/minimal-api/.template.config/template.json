@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "AnsElgyarDev",
+  "classifications": ["Web", "API"],
+  "identity": "AnsElgyar.Templates.MinimalApi",
+  "name": "Minimal API",
+  "shortName": "my-minimal-api",
+  "description": "ASP.NET Core Minimal API with JWT auth, EF Core, Scalar and tests.",
+  "tags": { "language": "C#", "type": "project" },
+  "sourceName": "MyCompany.MinimalApi",
+  "preferNameDirectory": true,
+
+  "sources": [
+    {
+      "exclude": [
+        "**/bin/**",
+        "**/obj/**",
+        "**/.vs/**",
+        "**/*.user",
+        "**/UnitTest1.cs"
+      ]
+    }
+  ],
+
+  "symbols": {
+    "UserSecretsId": {
+      "type": "generated",
+      "generator": "guid",
+      "parameters": { "defaultFormat": "d" },
+      "replaces": "ff33b65f-4e1e-49e3-a8ec-31cdf6ce3f32"
+    },
+
+    "HttpPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": { "low": 5000, "high": 5300 }
+    },
+    "HttpPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "HTTP port in launchSettings.json (random if omitted)."
+    },
+    "HttpPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "HttpPort",
+        "fallbackVariableName": "HttpPortGenerated"
+      },
+      "replaces": "5055"
+    },
+
+    "HttpsPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": { "low": 7000, "high": 7300 }
+    },
+    "HttpsPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "HTTPS port in launchSettings.json (random if omitted)."
+    },
+    "HttpsPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "HttpsPort",
+        "fallbackVariableName": "HttpsPortGenerated"
+      },
+      "replaces": "7282"
+    }
+  }
+}
