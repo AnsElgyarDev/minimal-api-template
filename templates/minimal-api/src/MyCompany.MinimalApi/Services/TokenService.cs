@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using MyCompany.MinimalApi.Models;
@@ -11,18 +12,13 @@ public interface ITokenService
     (string Token, DateTime ExpiresAt) CreateToken(User user);
 }
 
-public class TokenService : ITokenService
+public class TokenService(IOptions<JwtSettings> options) : ITokenService
 {
-    private readonly IConfiguration _config;
-
-    public TokenService(IConfiguration config)
-    {
-        _config = config;
-    }
+    private readonly JwtSettings _jwt = options.Value;
 
     public (string Token, DateTime ExpiresAt) CreateToken(User user)
     {
-        var expiresAt = DateTime.UtcNow.AddMinutes(_config.GetValue<int>("Jwt:ExpiryMinutes", 60));
+        var expiresAt = DateTime.UtcNow.AddMinutes(_jwt.ExpiryMinutes);
 
         var descriptor = new SecurityTokenDescriptor
         {
@@ -33,10 +29,10 @@ public class TokenService : ITokenService
                 new Claim(ClaimTypes.Role, user.Role)
             }),
             Expires = expiresAt,
-            Issuer = _config["Jwt:Issuer"],
-            Audience = _config["Jwt:Audience"],
+            Issuer = _jwt.Issuer,
+            Audience = _jwt.Audience,
             SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)),
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key)),
                 SecurityAlgorithms.HmacSha256)
         };
 

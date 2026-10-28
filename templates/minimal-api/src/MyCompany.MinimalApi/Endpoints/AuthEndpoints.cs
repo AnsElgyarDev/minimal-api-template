@@ -27,15 +27,16 @@ public static class AuthEndpoints
         IPasswordHasher<User> hasher)
     {
         var errors = new Dictionary<string, string[]>();
-        if (string.IsNullOrWhiteSpace(request.Email) || !request.Email.Contains('@'))
+        var emailInput = request.Email?.Trim();
+        if (string.IsNullOrWhiteSpace(emailInput) || emailInput.Length > 256 || !emailInput.Contains('@'))
             errors["email"] = ["A valid email is required."];
-        if (string.IsNullOrEmpty(request.Password) || request.Password.Length < 8)
-            errors["password"] = ["Password must be at least 8 characters."];
+        if (string.IsNullOrEmpty(request.Password) || request.Password.Length is < 8 or > 128)
+            errors["password"] = ["Password must be between 8 and 128 characters."];
         if (errors.Count > 0)
             return Results.ValidationProblem(errors);
 
-        var email = request.Email!.Trim().ToLowerInvariant();
-
+        var email = emailInput!.ToLowerInvariant();
+        
         if (await db.Users.AnyAsync(u => u.Email == email))
             return Results.Problem(statusCode: StatusCodes.Status409Conflict, title: "Email is already registered.");
 

@@ -23,7 +23,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             return true;
         }
 
-        var isBadRequest = exception is ArgumentException or BadHttpRequestException;
+        var isBadRequest = exception is BadHttpRequestException;
 
         if (isBadRequest)
         {
