@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageId>MyTemplates</PackageId>
+    <PackageId>AnsElgyar.Templates</PackageId>
     <Version>0.1.0-beta</Version>
     <Authors>Ans Elgyar</Authors>
     <Description>A dotnet new template for a clean, ready-to-run ASP.NET Core Minimal API project.</Description>
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <Content Include="templates\**\*"
-             Exclude="templates\**\bin\**;templates\**\obj\**;templates\**\.vs\**" />
+             Exclude="templates\**\bin\**;templates\**\obj\**;templates\**\.vs\**;templates\**\*.user;templates\**\TestResults\**" />
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
