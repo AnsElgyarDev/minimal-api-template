@@ -12,7 +12,7 @@
     <PackageProjectUrl>https://github.com/AnsElgyarDev/minimal-api-template</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AnsElgyarDev/minimal-api-template</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-
+    <NoDefaultExcludes>true</NoDefaultExcludes>
     <TargetFramework>net10.0</TargetFramework>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
