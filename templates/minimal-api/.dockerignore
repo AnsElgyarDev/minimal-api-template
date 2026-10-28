@@ -17,3 +17,8 @@
 Dockerfile*
 .dockerignore
 tests/
+
+# Never ship local secrets or dev config
+**/appsettings.Development.json
+**/secrets.json
+**/.env
