@@ -1,8 +1,8 @@
 # Minimal API Template
 
-[![NuGet](https://img.shields.io/nuget/v/AnsElgyar.Templates?logo=nuget)](https://www.nuget.org/packages/AnsElgyar.Templates)
-[![NuGet downloads](https://img.shields.io/nuget/dt/AnsElgyar.Templates?logo=nuget)](https://www.nuget.org/packages/AnsElgyar.Templates)
-[![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet)](https://dotnet.microsoft.com/download)
+[![NuGet](https://img.shields.io/nuget/vpre/AnsElgyar.Templates)](https://www.nuget.org/packages/AnsElgyar.Templates)
+[![NuGet downloads](https://img.shields.io/nuget/dt/AnsElgyar.Templates)](https://www.nuget.org/packages/AnsElgyar.Templates)
+![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A `dotnet new` template that scaffolds a ready-to-run ASP.NET Core Minimal API (.NET 10) with JWT authentication, EF Core on SQL Server, tests and a Dockerfile. The project name you pass with `-n` is applied to the solution, folders, project files, namespaces, Dockerfile, database name, and JWT issuer/audience.
@@ -34,18 +34,18 @@ dotnet new my-minimal-api -n ShopApp
 
 ## Install
 
+From NuGet (the current release is a prerelease, so the version is required):
+
+```
+dotnet new install AnsElgyar.Templates::0.1.0-beta
+```
+
 From source:
 
 ```
 git clone https://github.com/AnsElgyarDev/minimal-api-template.git
 cd minimal-api-template
 dotnet new install ./templates/minimal-api
-```
-
-From NuGet (works once the package is published):
-
-```
-dotnet new install AnsElgyar.Templates
 ```
 
 Check that it is registered:
@@ -63,7 +63,7 @@ dotnet ef database update --project src/ShopApp
 dotnet run --project src/ShopApp
 ```
 
-> All commands in the sections below are run from the **generated project's root** (the `ShopApp/` folder), which is why they use `--project src/ShopApp`.
+All commands in the sections below are run from the generated project's root (the `ShopApp/` folder), which is why they use `--project src/ShopApp`.
 
 Open the URL printed in the console, then `/scalar/v1`. In Development, `/` redirects there.
 
@@ -71,12 +71,12 @@ Open the URL printed in the console, then `/scalar/v1`. In Development, `/` redi
 
 ### Template parameters
 
-| Parameter        | Default            | Description                                               |
-| ---------------- | ------------------ | --------------------------------------------------------- |
-| `-n`, `--name`   | folder name        | Project name. Replaces `MyCompany.MinimalApi` everywhere. |
-| `-o`, `--output` | current folder     | Output directory.                                         |
-| `--HttpPort`     | random (5000-5300) | HTTP port in `launchSettings.json`.                       |
-| `--HttpsPort`    | random (7000-7300) | HTTPS port in `launchSettings.json`.                      |
+| Parameter | Default | Description |
+|---|---|---|
+| `-n`, `--name` | folder name | Project name. Replaces `MyCompany.MinimalApi` everywhere. |
+| `-o`, `--output` | folder named after the project | Output directory. |
+| `--HttpPort` | random (5000-5300) | HTTP port in `launchSettings.json`. |
+| `--HttpsPort` | random (7000-7300) | HTTPS port in `launchSettings.json`. |
 
 Preview without writing files: `dotnet new my-minimal-api -n ShopApp --dry-run`
 
@@ -111,24 +111,24 @@ ShopApp/
 
 ## Endpoints
 
-| Method | Path             | Access             | Description                                                                       |
-| ------ | ---------------- | ------------------ | --------------------------------------------------------------------------------- |
-| GET    | `/health`        | public             | Liveness check (does not touch the database).                                     |
-| POST   | `/auth/register` | public             | Body: `{ "email": "...", "password": "..." }`. Password must be 8-128 characters. |
-| POST   | `/auth/login`    | public             | Returns `{ "token", "expiresAt" }`.                                               |
-| GET    | `/users/me`      | any signed-in user | Returns the current user's `id`, `email`, `role`.                                 |
-| GET    | `/users`         | `Admin` role       | Lists all users.                                                                  |
+| Method | Path | Access | Description |
+|---|---|---|---|
+| GET | `/health` | public | Liveness check (does not touch the database). |
+| POST | `/auth/register` | public | Body: `{ "email": "...", "password": "..." }`. Password must be 8-128 characters. |
+| POST | `/auth/login` | public | Returns `{ "token", "expiresAt" }`. |
+| GET | `/users/me` | any signed-in user | Returns the current user's `id`, `email`, `role`. |
+| GET | `/users` | `Admin` role | Lists all users. |
 
 Send the token as `Authorization: Bearer <token>`.
 
 ## Configuration
 
-| Key                                               | Environment variable                                 | Where it comes from                                                             |
-| ------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `ConnectionStrings:DefaultConnection`             | `ConnectionStrings__DefaultConnection`               | `appsettings.json` (LocalDB)                                                    |
-| `Jwt:Issuer`, `Jwt:Audience`, `Jwt:ExpiryMinutes` | `Jwt__Issuer`, `Jwt__Audience`, `Jwt__ExpiryMinutes` | `appsettings.json`                                                              |
-| `Jwt:Key` (at least 32 characters)                | `Jwt__Key`                                           | `appsettings.Development.json` in Development; **you must supply it elsewhere** |
-| `EncryptionSettings:Key` (Base64 of 32 bytes)     | `EncryptionSettings__Key`                            | `appsettings.Development.json` in Development; **you must supply it elsewhere** |
+| Key | Environment variable | Where it comes from |
+|---|---|---|
+| `ConnectionStrings:DefaultConnection` | `ConnectionStrings__DefaultConnection` | `appsettings.json` (LocalDB) |
+| `Jwt:Issuer`, `Jwt:Audience`, `Jwt:ExpiryMinutes` | `Jwt__Issuer`, `Jwt__Audience`, `Jwt__ExpiryMinutes` | `appsettings.json` |
+| `Jwt:Key` (at least 32 characters) | `Jwt__Key` | `appsettings.Development.json` in Development; **you must supply it elsewhere** |
+| `EncryptionSettings:Key` (Base64 of 32 bytes) | `EncryptionSettings__Key` | `appsettings.Development.json` in Development; **you must supply it elsewhere** |
 
 `appsettings.Development.json` contains keys that are public in this repository. They are loaded only when `ASPNETCORE_ENVIRONMENT=Development`. **Never reuse them outside local development.** In any other environment the app fails at startup until real keys are provided.
 
@@ -230,16 +230,16 @@ Notes:
 
 ## What gets renamed
 
-| In the template                         | In the generated project                |
-| --------------------------------------- | --------------------------------------- |
-| `MyCompany.MinimalApi.slnx`             | `ShopApp.slnx`                          |
-| `src/MyCompany.MinimalApi/`, `*.csproj` | `src/ShopApp/`, `ShopApp.csproj`        |
-| `tests/MyCompany.MinimalApi.Tests/`     | `tests/ShopApp.Tests/`                  |
-| Namespaces and `using` lines            | `ShopApp...`                            |
-| Dockerfile paths and entry point        | `ShopApp...`                            |
-| Database name, JWT issuer and audience  | `ShopApp`, `ShopApp.Clients`            |
-| `UserSecretsId`                         | New GUID per project                    |
-| Ports in `launchSettings.json`          | Random, or `--HttpPort` / `--HttpsPort` |
+| In the template | In the generated project |
+|---|---|
+| `MyCompany.MinimalApi.slnx` | `ShopApp.slnx` |
+| `src/MyCompany.MinimalApi/`, `*.csproj` | `src/ShopApp/`, `ShopApp.csproj` |
+| `tests/MyCompany.MinimalApi.Tests/` | `tests/ShopApp.Tests/` |
+| Namespaces and `using` lines | `ShopApp...` |
+| Dockerfile paths and entry point | `ShopApp...` |
+| Database name, JWT issuer and audience | `ShopApp`, `ShopApp.Clients` |
+| `UserSecretsId` | New GUID per project |
+| Ports in `launchSettings.json` | Random, or `--HttpPort` / `--HttpsPort` |
 
 ## Developing the template
 
@@ -272,20 +272,27 @@ If the template engine shows stale results: `dotnet new --debug:reinit`.
 
 Keep the text `MyCompany.MinimalApi` as the only form of the project name in the template. The engine replaces that exact text; other spellings are left untouched.
 
-## Packaging and publishing
+## Releasing
+
+Releases are published to NuGet automatically by GitHub Actions using [Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing), so no API key is stored anywhere.
+
+1. Increase `<Version>` in `MyTemplates.csproj`.
+2. Commit and push to `main`.
+3. Tag and push the tag:
+   ```
+   git tag v0.1.1
+   git push origin v0.1.1
+   ```
+4. The `publish` workflow packs the template, generates a project from the package, builds and tests it, then pushes the package to nuget.org.
+
+To check the package locally before tagging:
 
 ```
 dotnet pack -c Release -o ./artifacts
 dotnet new install ./artifacts/AnsElgyar.Templates.<version>.nupkg
 ```
 
-Generate a project from the installed package and build it before publishing. Then:
-
-```
-dotnet nuget push ./artifacts/AnsElgyar.Templates.<version>.nupkg --api-key <YOUR_API_KEY> --source https://api.nuget.org/v3/index.json
-```
-
-A published version cannot be overwritten. Increase `<Version>` in `MyTemplates.csproj` for every release. Never commit your API key.
+Generate a project from it and run `dotnet test`. A published version cannot be overwritten.
 
 ## Update and uninstall
 
@@ -296,16 +303,17 @@ dotnet new uninstall AnsElgyar.Templates
 
 ## Troubleshooting
 
-| Problem                                                                   | Solution                                                                                                   |
-| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `Unable to locate a Local Database Runtime installation`                  | LocalDB is not installed. Install it, or override the connection string (see [Database](#database)).       |
-| App stops at startup with a `Jwt:Key` or `EncryptionSettings:Key` message | The key is missing or invalid. Set it with user secrets or an environment variable.                        |
-| `dotnet build` cannot find `Shop_App.csproj`                              | The project name contained a hyphen. Use letters, digits and dots only.                                    |
-| Template not found after install                                          | Run `dotnet new list my-minimal-api`. If empty, check that `.template.config/template.json` is valid JSON. |
-| `MyCompany` still appears in a generated project                          | Search the output for it and make sure that file uses exactly `MyCompany.MinimalApi`.                      |
-| Changes to the template are not applied                                   | Uninstall, reinstall, then run `dotnet new --debug:reinit`.                                                |
-| `Failed to determine the https port for redirect` warning                 | Harmless when running over HTTP only or behind a proxy.                                                    |
-| `dotnet ef` says the tools are older than the runtime                     | `dotnet tool update --global dotnet-ef`.                                                                   |
+| Problem | Solution |
+|---|---|
+| `Unable to locate a Local Database Runtime installation` | LocalDB is not installed. Install it, or override the connection string (see [Database](#database)). |
+| App stops at startup with a `Jwt:Key` or `EncryptionSettings:Key` message | The key is missing or invalid. Set it with user secrets or an environment variable. |
+| `dotnet build` cannot find `Shop_App.csproj` | The project name contained a hyphen. Use letters, digits and dots only. |
+| `dotnet new install AnsElgyar.Templates` finds nothing | The release is a prerelease. Add the version: `AnsElgyar.Templates::0.1.0-beta`. |
+| Template not found after install | Run `dotnet new list my-minimal-api`. If empty, check that `.template.config/template.json` is valid JSON. |
+| `MyCompany` still appears in a generated project | Search the output for it and make sure that file uses exactly `MyCompany.MinimalApi`. |
+| Changes to the template are not applied | Uninstall, reinstall, then run `dotnet new --debug:reinit`. |
+| `Failed to determine the https port for redirect` warning | Harmless when running over HTTP only or behind a proxy. |
+| `dotnet ef` says the tools are older than the runtime | `dotnet tool update --global dotnet-ef`. |
 
 ## License
 
