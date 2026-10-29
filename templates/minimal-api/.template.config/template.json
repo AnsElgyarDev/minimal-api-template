@@ -13,11 +13,14 @@
   "sources": [
     {
       "exclude": [
-        "**/bin/**",
-        "**/obj/**",
-        "**/.vs/**",
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
         "**/*.user",
-        "**/UnitTest1.cs"
+        "**/*.lock.json",
+        "**/.vs/**",
+        "**/TestResults/**"
       ]
     }
   ],
